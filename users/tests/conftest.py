@@ -5,8 +5,8 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.testclient import TestClient
 
-from users.app import get_db
-from users.app import app
+from users.app.database import get_db
+from users.app.main import app
 
 
 DATABASE_URL_TEST = 'sqlite+aiosqlite:///:memory:'
