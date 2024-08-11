@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional
 
 from sqlmodel import SQLModel, Field
 from pydantic import EmailStr

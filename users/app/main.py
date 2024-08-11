@@ -1,7 +1,5 @@
 from fastapi import FastAPI
-from endpoints import router
-import mq_listener
-
+from .endpoints import router
 app = FastAPI()
 
 app.include_router(router)

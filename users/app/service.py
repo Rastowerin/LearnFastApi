@@ -1,7 +1,7 @@
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from models import UserPublic, UserCreate, User, UserUpdate
+from .models import UserPublic, UserCreate, User, UserUpdate
 
 
 async def get_all_users(session: AsyncSession) -> list[UserPublic]:
