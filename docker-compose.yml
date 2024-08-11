@@ -2,12 +2,19 @@ version: "3.9"
 
 services:
 
-  db:
+  db_users:
     image: postgres:latest
-    container_name: FastApiPostgres
+    container_name: FastApiPostgresUsers
     environment:
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: mydb
       POSTGRES_USER: dbuser
     ports:
       - "5432:5432"
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"

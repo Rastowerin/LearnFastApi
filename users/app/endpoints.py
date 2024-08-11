@@ -1,9 +1,11 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from users.app.database import get_db
-from users.app.models import UserCreate, UserPublic, UserUpdate
-from users.app import service
+from database import get_db
+from models import UserCreate, UserPublic, UserUpdate
+import service
 
 router = APIRouter()
 

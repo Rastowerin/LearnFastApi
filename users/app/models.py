@@ -33,10 +33,10 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    username: str | None = None
+    email: EmailStr | None = None
+    first_name: str | None = None
+    last_name: str | None = None
 
 
 class UserPublic(UserBase):
