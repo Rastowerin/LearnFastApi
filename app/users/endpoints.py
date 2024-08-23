@@ -1,16 +1,11 @@
-from pickle import loads, dumps
-
 from fastapi import APIRouter, Depends
-from redis import Redis
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from .database import get_db
-from .models import UserCreate, UserPublic, UserUpdate
-from .service import get_user, get_all_users, create_user, update_user, delete_user
+from app.database import get_db
+from app.users.models import UserCreate, UserPublic, UserUpdate
+from app.users.services import get_user, get_all_users, create_user, update_user, delete_user
 
 router = APIRouter()
-
-redis_client = Redis(host='localhost', port=6379, db=0)
 
 
 @router.get("/users", response_model=list[UserPublic], status_code=200)
