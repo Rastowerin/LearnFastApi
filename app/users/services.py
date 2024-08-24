@@ -1,45 +1,56 @@
+from passlib.context import CryptContext
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.users.models import UserPublic, UserCreate, User, UserUpdate
+from app.users.models import UserCreate, User, UserUpdate
 
 
-async def get_all_users(session: AsyncSession) -> list[UserPublic]:
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+async def get_all_users(session: AsyncSession) -> list[User]:
     query = select(User).order_by(User.id)
     result = await session.exec(query)
-    users = result.all()
-    return [UserPublic.from_orm(user) for user in users]
+    users = list(result.all())
+    return users
 
 
-async def get_user(session: AsyncSession, user_id: int) -> UserPublic:
+async def get_user(session: AsyncSession, user_id: int) -> User:
     query = select(User).where(User.id == user_id)
     result = await session.exec(query)
     user = result.first()
-    return UserPublic.from_orm(user)
+    return user
 
 
-async def create_user(session: AsyncSession, user: UserCreate) -> UserPublic:
-    db_user = User(**user.dict(), hashed_password=user.password + '_hashed')
-    session.add(db_user)
-    query = select(User).where(User.username == db_user.username)
+async def get_user_by_username(session: AsyncSession, username: str) -> User:
+    query = select(User).where(User.username == username)
     result = await session.exec(query)
     user = result.first()
-    return UserPublic.from_orm(user)
+    return user
 
 
-async def update_user(session: AsyncSession, user_id: int, user: UserUpdate) -> UserPublic:
+async def create_user(session: AsyncSession, user_create: UserCreate) -> User:
+    hashed_password = pwd_context.hash(user_create.password)
+    user = User(**user_create.model_dump(), hashed_password=hashed_password)
+    session.add(user)
+    query = select(User).where(User.username == user.username)
+    result = await session.exec(query)
+    user = result.first()
+    return user
+
+
+async def update_user(session: AsyncSession, user_id: int, user_update: UserUpdate) -> User:
     query = select(User).filter(User.id == user_id)
     result = await session.exec(query)
-    db_user = result.first()
-    for key, value in user.model_dump(exclude_unset=True).items():
-        setattr(db_user, key, value)
-    session.add(db_user)
-    return UserPublic.from_orm(db_user)
+    user = result.first()
+    for key, value in user_update.model_dump(exclude_unset=True).items():
+        setattr(user, key, value)
+    session.add(user)
+    return user
 
 
 async def delete_user(session: AsyncSession, user_id: int) -> None:
     query = select(User).filter(User.id == user_id)
     result = await session.exec(query)
-    db_user = result.first()
-    await session.delete(db_user)
-    return
+    user = result.first()
+    await session.delete(user)

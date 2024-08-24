@@ -3,8 +3,6 @@ from enum import Enum
 from sqlmodel import SQLModel, Field
 from pydantic import EmailStr
 
-DATABASE_URL = "postgresql+asyncpg://dbuser:123@localhost:5432/mydb"
-
 
 class Role(Enum):
     USER = "user"

@@ -1,31 +1,18 @@
-from contextlib import asynccontextmanager
-
-import aio_pika
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware.authentication import AuthenticationMiddleware
 
-from app.users.endpoints import router
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    app.state.rabbit_connection = await aio_pika.connect_robust("amqp://guest:guest@localhost:5672/")
-    app.state.rabbit_channel = await app.state.rabbit_connection.channel()
-    yield
-    await app.state.rabbit_connection.close()
+from app.middleware import BearerTokenAuthBackend
+from app.users.endpoints import router as users_router
+from app.auth.endpoints import router as auth_router
 
 
-async def consume_messages():
-    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost:5672/")
-    async with connection:
-        channel = await connection.channel()
-        async for message in channel:
-            async with message.process():
-                print(f"Received message: {message.body.decode()}")
+app = FastAPI()
 
-app = FastAPI(lifespan=None)
+app.add_middleware(AuthenticationMiddleware, backend=BearerTokenAuthBackend())
 
-app.include_router(router)
+app.include_router(users_router)
+app.include_router(auth_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

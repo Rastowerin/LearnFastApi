@@ -4,15 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.testclient import TestClient
-
-from app import get_db
-from app import app
-
-
-DATABASE_URL_TEST = 'sqlite+aiosqlite:///:memory:'
-
-async_engine = create_async_engine(DATABASE_URL_TEST)
-AsyncSessionLocal = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+from app.database import get_db
+from app.main import app
 
 DATABASE_URL_TEST = 'sqlite+aiosqlite:///:memory:'
 
