@@ -32,35 +32,36 @@ async def test_create(client, reset):
 
     result = response.json()
     del result['id']
-
     expected = {
         **user_data1,
         'role': 'user'
     }
     del expected['password']
-
     assert result == expected
+
+    response = client.post('/users', json=user_data1)
+    assert response.status_code == 409
 
 
 @pytest.mark.asyncio
 async def test_get_single(client, reset):
     await reset
 
+    response = client.get('/users/1')
+    assert response.status_code == 404
+
     response = client.post('/users', json=user_data1)
     id = response.json()['id']
-
     response = client.get(f'/users/{id}')
     assert response.status_code == 200
 
     result = response.json()
     del result['id']
-
     expected = {
         **user_data1,
         'role': 'user'
     }
     del expected['password']
-
     assert result == expected
 
 
@@ -70,7 +71,6 @@ async def test_get_all(client, reset):
 
     client.post('/users', json=user_data1)
     client.post('/users', json=user_data2)
-
     response = client.get('/users')
     assert response.status_code == 200
 
@@ -82,14 +82,15 @@ async def test_get_all(client, reset):
 async def test_update(client, reset):
     await reset
 
+    response = client.patch(f'/users/1', json=user_data1_update)
+    assert response.status_code == 404
+
     response = client.post('/users', json=user_data1)
     id = response.json()['id']
-
     response = client.patch(f'/users/{id}', json=user_data1_update)
     assert response.status_code == 200
 
     result = response.json()
-
     expected = {
         'id': id,
         **user_data1,
@@ -97,7 +98,6 @@ async def test_update(client, reset):
         'role': 'user',
     }
     del expected['password']
-
     assert result == expected
 
 
@@ -105,15 +105,15 @@ async def test_update(client, reset):
 async def test_delete(client, reset):
     await reset
 
+    response = client.delete('/users/1')
+    assert response.status_code == 404
+
     response = client.post('/users', json=user_data1)
     id = response.json()['id']
-
     response = client.delete(f'/users/{id}')
     assert response.status_code == 204
 
     response = client.get(f'/users')
-
     result = response.json()
     expected = []
-
     assert result == expected

@@ -13,7 +13,7 @@ router = APIRouter()
 async def login(credentials: UserCredentials, session: AsyncSession = Depends(get_db)):
     try:
         return {"token": await generate_token(session, credentials)}
-    except (UserNotFoundException, InvalidCredentialsException) as e:
+    except InvalidCredentialsException as e:
         code = {
             UserNotFoundException: 404,
             InvalidCredentialsException: 401

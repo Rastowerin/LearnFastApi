@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/users", response_model=list[UserPublic], status_code=200)
-async def get_list(request: Request, session: AsyncSession = Depends(get_db)):
+async def get_list(session: AsyncSession = Depends(get_db)):
     return await get_all_users(session)
 
 
